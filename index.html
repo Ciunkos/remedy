@@ -11,6 +11,11 @@
         margin: 0;
       }
 
+      * {
+        outline-color: #025ecc;
+        box-sizing: border-box;
+      }
+
       body {
         padding: 16px;
       }
@@ -18,7 +23,7 @@
       input {
         font: inherit;
         padding: 8px 24px;
-        border-radius: 99999px;
+        border-radius: 24px;
         background: #f2f2f2;
         appearance: none;
         border: none;
@@ -29,7 +34,7 @@
         padding: 8px;
         min-width: 40px;
         min-height: 40px;
-        border-radius: 99999px;
+        border-radius: 24px;
         background: #f2f2f2;
         appearance: none;
         border: none;
@@ -44,13 +49,14 @@
       chat-message {
         display: block;
         padding: 8px 24px;
-        border-radius: 99999px;
+        border-radius: 24px;
         background: #f2f2f2;
         display: flex;
         flex-grow: 0;
         width: auto;
         display: flex;
         width: max-content;
+        max-width: 100%;
       }
 
       chat-message[sent] {
@@ -97,9 +103,9 @@
   </head>
   <body>
     <chat-messages id="chat-messages">
-      <chat-message>Z damiano nie ma szans</chat-message>
-      <chat-message>Robimy coś innego 🙂</chat-message>
-      <chat-message sent
+      <chat-message tabindex="0">Z damiano nie ma szans</chat-message>
+      <chat-message tabindex="0">Robimy coś innego 🙂</chat-message>
+      <chat-message tabindex="0" sent
         >Spox, jestem zaciekawiony. Nie przeszkadzam 🙂</chat-message
       >
     </chat-messages>
