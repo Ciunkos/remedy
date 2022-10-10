@@ -22,11 +22,19 @@
         display: flex;
         width: max-content;
       }
+
+      chat-message[sent] {
+        background: #ff2e58;
+        color: white;
+        align-self: flex-end;
+      }
     </style>
   </head>
   <body>
     <chat-message>Z damiano nie ma szans</chat-message>
     <chat-message>Robimy coś innego 🙂</chat-message>
-    <chat-message>Spox, jestem zaciekawiony. Nie przeszkadzam 🙂</chat-message>
+    <chat-message sent
+      >Spox, jestem zaciekawiony. Nie przeszkadzam 🙂</chat-message
+    >
   </body>
 </html>
