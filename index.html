@@ -1,9 +1,32 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+          sans-serif;
+      }
+
+      chat-message {
+        display: block;
+        padding: 8px;
+        border-radius: 99999px;
+        background: #f2f2f2;
+        display: flex;
+        flex-grow: 0;
+        width: auto;
+        display: flex;
+        width: max-content;
+      }
+    </style>
   </head>
   <body>
-    <h1>Cześć Asia</h1>
-    <p>Buziaki od Przemusia</p>
+    <chat-message>Z damiano nie ma szans</chat-message>
+    <chat-message>Robimy coś innego 🙂</chat-message>
+    <chat-message>Spox, jestem zaciekawiony. Nie przeszkadzam 🙂</chat-message>
   </body>
 </html>
