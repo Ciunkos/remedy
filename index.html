@@ -2,7 +2,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
-      body {
+      chat-messages {
         display: flex;
         flex-direction: column;
         gap: 8px;
@@ -29,12 +29,39 @@
         align-self: flex-end;
       }
     </style>
+    <script type="module">
+      const chatComposer = document.getElementById('chat-composer');
+      const chatInput = document.getElementById('chat-input');
+      const chatMessages = document.getElementById('chat-messages');
+
+      chatComposer.addEventListener('submit', event => {
+        event.preventDefault();
+
+        const message = chatInput.value;
+
+        const newMessage = document.createElement('chat-message');
+        newMessage.innerText = message;
+        newMessage.setAttribute('sent', '');
+
+        chatMessages.appendChild(newMessage);
+
+        chatInput.value = '';
+      })
+    </script>
   </head>
   <body>
-    <chat-message>Z damiano nie ma szans</chat-message>
-    <chat-message>Robimy coś innego 🙂</chat-message>
-    <chat-message sent
-      >Spox, jestem zaciekawiony. Nie przeszkadzam 🙂</chat-message
-    >
+    <chat-messages id="chat-messages">
+      <chat-message>Z damiano nie ma szans</chat-message>
+      <chat-message>Robimy coś innego 🙂</chat-message>
+      <chat-message sent
+        >Spox, jestem zaciekawiony. Nie przeszkadzam 🙂</chat-message
+      >
+    </chat-messages>
+    <div>
+      <form id="chat-composer">
+        <input id="chat-input" type="text" name="message"></input>
+        <button>↑</button>
+      </form>
+    </div>
   </body>
 </html>
