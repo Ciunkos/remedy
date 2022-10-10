@@ -2,18 +2,48 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
+      body,
+      html {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+          sans-serif;
+        line-height: 1.5;
+        margin: 0;
+      }
+
+      body {
+        padding: 16px;
+      }
+
+      input {
+        font: inherit;
+        padding: 8px 24px;
+        border-radius: 99999px;
+        background: #f2f2f2;
+        appearance: none;
+        border: none;
+      }
+
+      button {
+        font: inherit;
+        padding: 8px;
+        min-width: 40px;
+        min-height: 40px;
+        border-radius: 99999px;
+        background: #f2f2f2;
+        appearance: none;
+        border: none;
+      }
+
       chat-messages {
         display: flex;
         flex-direction: column;
         gap: 8px;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-          Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
-          sans-serif;
       }
 
       chat-message {
         display: block;
-        padding: 8px;
+        padding: 8px 24px;
         border-radius: 99999px;
         background: #f2f2f2;
         display: flex;
@@ -27,6 +57,22 @@
         background: #ff2e58;
         color: white;
         align-self: flex-end;
+      }
+
+      form {
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        left: 0%;
+        display: flex;
+        gap: 8px;
+        margin: 0;
+        padding: 16px;
+      }
+
+      input {
+        display: flex;
+        width: 100%;
       }
     </style>
     <script type="module">
@@ -59,7 +105,7 @@
     </chat-messages>
     <div>
       <form id="chat-composer">
-        <input id="chat-input" type="text" name="message"></input>
+        <input id="chat-input" type="text" name="message" placeholder="Aa"></input>
         <button>↑</button>
       </form>
     </div>
