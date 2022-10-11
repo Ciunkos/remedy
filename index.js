@@ -25,6 +25,7 @@ app.get("/echo", (req, res) => {
     body: req.body,
     cookies: req.cookies,
     headers: req.headers,
+    hostname: req.hostname,
     httpVersion: req.httpVersion,
     ip: req.ip,
     ips: req.ips,
@@ -34,7 +35,6 @@ app.get("/echo", (req, res) => {
     path: req.path,
     query: req.query,
     url: req.url,
-    xyz: req.hostname,
   });
 });
 
