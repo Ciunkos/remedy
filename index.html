@@ -18,6 +18,10 @@
 
       body {
         padding: 16px;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        scroll-behavior: smooth;
       }
 
       input {
@@ -69,11 +73,17 @@
         position: fixed;
         bottom: 0;
         right: 0;
-        left: 0%;
+        left: 0;
         display: flex;
         gap: 8px;
         margin: 0;
         padding: 16px;
+        position: sticky;
+        width: 100%;
+        margin-bottom: -16px;
+        margin-left: -16px;
+        margin-right: -16px;
+        width: calc(100% + 32px);
       }
 
       input {
@@ -98,11 +108,22 @@
         chatMessages.appendChild(newMessage);
 
         chatInput.value = '';
+        chatInput.scrollIntoView({ block:"end", behavior:"smooth"})
+        window.scrollTo(0, document.body.scrollHeight);
       })
     </script>
   </head>
   <body>
     <chat-messages id="chat-messages">
+      <style>
+        chat-messages {
+          align-self: flex-end;
+          flex-grow: 1;
+          display: flex;
+          justify-content: flex-end;
+          width: 100%;
+        }
+      </style>
       <chat-message tabindex="0">Z damiano nie ma szans</chat-message>
       <chat-message tabindex="0">Robimy coś innego 🙂</chat-message>
       <chat-message tabindex="0" sent
