@@ -1,6 +1,7 @@
 import express from "express";
 import { readFile } from "fs/promises";
 import bodyParser from "body-parser";
+import { WebSocket, WebSocketServer } from "ws";
 
 const app = express();
 
@@ -40,6 +41,24 @@ app.get("/echo", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Listening on ${PORT}`);
+});
+
+const wsServer = new WebSocketServer({ noServer: true });
+
+wsServer.on("connection", (socket) => {
+  socket.on("message", (data, isBinary) => {
+    wsServer.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(data, { binary: isBinary });
+      }
+    });
+  });
+});
+
+server.on("upgrade", (request, socket, head) => {
+  wsServer.handleUpgrade(request, socket, head, (socket) => {
+    wsServer.emit("connection", socket, request);
+  });
 });

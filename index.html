@@ -93,6 +93,46 @@
       }
     </style>
     <script type="module">
+      let me = undefined;
+
+      {
+        me = localStorage.getItem("me");
+
+        if (!me) {
+          // https://stackoverflow.com/a/66332305/1384679
+          me = URL.createObjectURL(new Blob([])).substr(-36);
+
+          localStorage.setItem("me", me);
+        }
+      }
+
+      localStorage.getItem("me") || localStorage.setItem("me");
+      const socket = new WebSocket("ws://localhost:3000/path");
+
+      socket.addEventListener("open", () => {
+        socket.send("Hello Server!");
+      });
+
+      socket.addEventListener("message", (event) => {
+        try {
+          console.log("Message from server ", event.data);
+
+          const json = JSON.parse(event.data);
+          const { text, from } = json;
+
+          const newMessage = document.createElement("chat-message");
+          newMessage.innerText = text;
+
+          if (from === me) {
+            newMessage.setAttribute("sent", "");
+          }
+
+          chatMessages.appendChild(newMessage);
+        } catch (error) {
+          console.error(error);
+        }
+      });
+
       const chatComposer = document.getElementById("chat-composer");
       const chatInput = document.getElementById("chat-input");
       const chatMessages = document.getElementById("chat-messages");
@@ -102,11 +142,22 @@
 
         const message = chatInput.value;
 
-        const newMessage = document.createElement("chat-message");
-        newMessage.innerText = message;
-        newMessage.setAttribute("sent", "");
+        // Optimistic updates could be done here:
+        // const newMessage = document.createElement("chat-message");
+        // newMessage.innerText = message;
+        // newMessage.setAttribute("sent", "");
+        // chatMessages.appendChild(newMessage);
 
-        chatMessages.appendChild(newMessage);
+        const timestamp = Date.now();
+
+        const json = JSON.stringify({
+          from: me,
+          text: message,
+          timestamp,
+          type: "message",
+        });
+
+        socket.send(json);
 
         chatInput.value = "";
         chatInput.scrollIntoView({ block: "end", behavior: "smooth" });
