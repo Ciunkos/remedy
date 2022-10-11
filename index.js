@@ -29,6 +29,7 @@ app.get("/echo", (req, res) => {
     ip: req.ip,
     ips: req.ips,
     method: req.method,
+    originalUrl: req.originalUrl,
     params: req.params,
     path: req.path,
     query: req.query,
