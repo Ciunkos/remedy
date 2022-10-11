@@ -92,25 +92,25 @@
       }
     </style>
     <script type="module">
-      const chatComposer = document.getElementById('chat-composer');
-      const chatInput = document.getElementById('chat-input');
-      const chatMessages = document.getElementById('chat-messages');
+      const chatComposer = document.getElementById("chat-composer");
+      const chatInput = document.getElementById("chat-input");
+      const chatMessages = document.getElementById("chat-messages");
 
-      chatComposer.addEventListener('submit', event => {
+      chatComposer.addEventListener("submit", (event) => {
         event.preventDefault();
 
         const message = chatInput.value;
 
-        const newMessage = document.createElement('chat-message');
+        const newMessage = document.createElement("chat-message");
         newMessage.innerText = message;
-        newMessage.setAttribute('sent', '');
+        newMessage.setAttribute("sent", "");
 
         chatMessages.appendChild(newMessage);
 
-        chatInput.value = '';
-        chatInput.scrollIntoView({ block:"end", behavior:"smooth"})
+        chatInput.value = "";
+        chatInput.scrollIntoView({ block: "end", behavior: "smooth" });
         window.scrollTo(0, document.body.scrollHeight);
-      })
+      });
     </script>
   </head>
   <body>
@@ -129,10 +129,11 @@
       <chat-message tabindex="0" sent
         >Spox, jestem zaciekawiony. Nie przeszkadzam 🙂</chat-message
       >
+      <chat-message tabindex="0">Test 🙂</chat-message>
     </chat-messages>
     <div>
       <form id="chat-composer">
-        <input id="chat-input" type="text" name="message" placeholder="Aa"></input>
+        <input id="chat-input" type="text" name="message" placeholder="Aa" />
         <button>↑</button>
       </form>
     </div>
