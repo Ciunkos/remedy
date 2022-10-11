@@ -107,7 +107,15 @@
       }
 
       localStorage.getItem("me") || localStorage.setItem("me");
-      const socket = new WebSocket("ws://localhost:3000/path");
+
+      const socketEndpoint =
+        !window.location.hostname || window.location.hostname === "localhost"
+          ? "ws://localhost:3000/"
+          : `${window.location.protocol === "https:" ? "wss" : "ws"}://${
+              window.location.hostname
+            }/`;
+
+      const socket = new WebSocket(socketEndpoint);
 
       socket.addEventListener("open", () => {
         socket.send("Hello Server!");
