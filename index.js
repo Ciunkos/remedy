@@ -1,15 +1,33 @@
 import express from "express";
+import http from "http";
 import { readFile } from "fs/promises";
 import bodyParser from "body-parser";
 import { WebSocket, WebSocketServer } from "ws";
+import expressOpenidConnect from "express-openid-connect";
+
+const { auth, requiresAuth } = expressOpenidConnect;
+
+const config = {
+  auth0Logout: true,
+  authRequired: false,
+  baseURL: process.env.BASE_URL,
+  clientID: process.env.AUTH0_CLIENT_ID,
+  enableTelemetry: false,
+  issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
+  secret: process.env.AUTH0_CLIENT_SECRET,
+};
 
 const app = express();
 
+const authMiddleware = auth(config);
+
+app.use(authMiddleware);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 let indexFilePromise = undefined;
-app.get("/", async (_, res, next) => {
+
+app.get("/", requiresAuth(), async (_, res, next) => {
   try {
     const contents = await (indexFilePromise ??
       (indexFilePromise = readFile("./index.html", "utf-8")));
@@ -52,31 +70,72 @@ const messages = [];
 wsServer.on("connection", (socket) => {
   console.log("connection");
 
-  socket.on("message", (data, isBinary) => {
-    console.log("message", { isBinary });
+  const user = socket.user;
 
-    messages.push([data, isBinary]);
+  socket.on("message", (data, isBinary) => {
+    const json = data.toString("utf8");
+
+    const authenticatedMessage = { ...JSON.parse(json), from: user.email };
+    const authenticatedMessageJson = JSON.stringify(authenticatedMessage);
+
+    messages.push([authenticatedMessageJson, isBinary]);
 
     wsServer.clients.forEach((client) => {
       console.log("broadcast");
 
       if (client.readyState === WebSocket.OPEN) {
-        client.send(data, { binary: isBinary });
+        client.send(authenticatedMessageJson, { binary: isBinary });
       }
     });
   });
 });
 
-server.on("upgrade", (request, socket, head) => {
+app.get("/profile", requiresAuth(), (req, res) => {
+  res.send(req.oidc.user);
+});
+
+server.on("upgrade", (req, socket, head) => {
   console.log("upgrade");
 
-  wsServer.handleUpgrade(request, socket, head, (socket) => {
-    console.log("connection");
-    wsServer.emit("connection", socket, request);
+  const res = new http.ServerResponse(req);
 
-    console.log("restore", { messages: messages.length });
-    for (const [data, isBinary] of messages) {
-      socket.send(data, { binary: isBinary });
+  res.on("finish", () => {
+    res.socket.destroy();
+  });
+
+  app.handle(req, res, () => {
+    const isAuthenticated = req.oidc.isAuthenticated();
+
+    if (isAuthenticated) {
+      try {
+        wsServer.handleUpgrade(req, socket, head, (socket) => {
+          console.log("connection");
+
+          socket.user = req.oidc.user;
+
+          wsServer.emit("connection", socket, req);
+
+          console.log("auth");
+          socket.send(
+            JSON.stringify({
+              id: req.oidc.user.email,
+              timestamp: Date.now(),
+              type: "auth",
+            }),
+            { binary: false }
+          );
+
+          console.log("restore", { messages: messages.length });
+          for (const [data, isBinary] of messages) {
+            socket.send(data, { binary: isBinary });
+          }
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
+      socket.destroy();
     }
   });
 });
