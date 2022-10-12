@@ -21,6 +21,16 @@ const app = express();
 
 const authMiddleware = auth(config);
 
+const isAllowed = (email) => {
+  if (!process.env.ALLOWED_USERS) {
+    return true;
+  }
+
+  return process.env.ALLOWED_USERS.split(",").some(
+    (allowedUser) => allowedUser === email
+  );
+};
+
 app.use(authMiddleware);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -106,7 +116,7 @@ server.on("upgrade", (req, socket, head) => {
   app.handle(req, res, () => {
     const isAuthenticated = req.oidc.isAuthenticated();
 
-    if (isAuthenticated) {
+    if (isAuthenticated && isAllowed(req.oidc.user.email)) {
       try {
         wsServer.handleUpgrade(req, socket, head, (socket) => {
           console.log("connection");
