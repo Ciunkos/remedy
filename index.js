@@ -47,9 +47,19 @@ const server = app.listen(PORT, () => {
 
 const wsServer = new WebSocketServer({ noServer: true });
 
+const messages = [];
+
 wsServer.on("connection", (socket) => {
+  console.log("connection");
+
   socket.on("message", (data, isBinary) => {
+    console.log("message", { isBinary });
+
+    messages.push([data, isBinary]);
+
     wsServer.clients.forEach((client) => {
+      console.log("broadcast");
+
       if (client.readyState === WebSocket.OPEN) {
         client.send(data, { binary: isBinary });
       }
@@ -58,7 +68,15 @@ wsServer.on("connection", (socket) => {
 });
 
 server.on("upgrade", (request, socket, head) => {
+  console.log("upgrade");
+
   wsServer.handleUpgrade(request, socket, head, (socket) => {
+    console.log("connection");
     wsServer.emit("connection", socket, request);
+
+    console.log("restore", { messages: messages.length });
+    for (const [data, isBinary] of messages) {
+      socket.send(data, { binary: isBinary });
+    }
   });
 });
